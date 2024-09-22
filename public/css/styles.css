@@ -4,3 +4,20 @@
 *:after {
   box-sizing: border-box;
 }
+header{
+  display: flex;
+  padding: auto;
+  width: 800px;
+  background-color: grey;
+  ;
+}
+header a{
+  text-decoration: none;
+}
+.siteName, #tools{
+  font-size: 25px;
+}
+#tools{
+  flex-direction: right;
+  padding-right: 500px;
+}
