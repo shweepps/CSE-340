@@ -1,5 +1,6 @@
 html{
   min-width: 314px;
+  font-family: sans-serif;
 }
 
 /******* Change Box Model ***************/
@@ -34,9 +35,10 @@ nav ul {
 }
 nav li{
   margin-right: 15px;
-  color: red;
+  color: white;
   text-decoration: none;
   width: 50%;
+  font-family: sans-serif;
  
 }
 nav{
@@ -84,7 +86,7 @@ text-decoration: none;
 .dmc-box{
   width: 192px;
   height: 140px;
-  background-color: #01b0d3;
+  background-color: #01b0d30e;
 }
 #btn{
   width: 192px;
