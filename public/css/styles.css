@@ -95,8 +95,6 @@ text-decoration: none;
 
 
 
-
-
 #DMC {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Two equal columns */
@@ -175,13 +173,16 @@ p {
 
 .upgrade-item {
   text-align: center;
+  background-color: #01b0d3;
+  width: 150px;
+  height: 150px;
 }
 
 .upgrade-item img {
   width: 100px;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0 1 2 4;
 }
 
 .upgrade-item p {
