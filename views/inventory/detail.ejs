@@ -1,0 +1,16 @@
+
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <div class="vehicle-details">
+      <img src="<%= vehicle.inv_image %>" alt="<%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+      <p>Price: $<%= vehicle.inv_price.toLocaleString() %></p>
+      <p>Mileage: <%= vehicle.inv_miles.toLocaleString() %> miles</p>
+      <p><%= vehicle.inv_description %></p>
+      <p>Year: <%= vehicle.inv_year %></p>
+      <p>Color: <%= vehicle.inv_color %></p>
+    </div>
+  <% } else { %>
+  res.redirect('/')
+  <% } %>
+  
+
