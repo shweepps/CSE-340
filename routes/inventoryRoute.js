@@ -12,8 +12,10 @@ router.get("/detail/:inv_id", invController.buildVehicleDetail);
 
 
 router.get("/trigger-error", (req, res, next) => {
-    throw new Error("Intentional server error!");
-  });
-  
+  const error = new Error("This is a custom-triggered error");
+  error.status = 500; // Set the status to 500 to simulate a server error
+  next(error); // Pass the error to the global error handler
+});
+
 
 module.exports = router;
