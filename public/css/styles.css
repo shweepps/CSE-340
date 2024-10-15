@@ -209,6 +209,10 @@ p {
     content: url('../images/vehicles/delorean.jpg');
   }
 
+  #flux{
+    content: url('../images/Upgrades/flux-cap.png');
+  }
+
   #wrapper {
     border-radius: 10px;
     margin-top: 1rem;
