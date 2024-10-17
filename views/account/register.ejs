@@ -1,0 +1,41 @@
+<% if (title) {%>
+    <h1><%= title %></h1>
+    <% } else {
+        res.redirect('/')
+    } %>
+    
+
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <li><%= error.msg %></li>
+  <%  }) %>
+   </ul>
+  <% } %>    
+
+
+<form action="/account/register" method="post" class="registration-form">
+  <p>ALL FIELDS ARE REQUIRED.</p>
+  <label for="account_firstname">First Name:</label>
+  <input type="text" name="account_firstname" id="account_firstname" required placeholder="Enter your first name">
+
+  <label for="account_lastname">Last Name:</label>
+  <input type="text" name="account_lastname" id="account_lastname" required placeholder="Enter your last name">
+
+  <label for="account_email">Email Address:</label>
+  <input type="email" name="account_email" id="account_email" required placeholder="Enter your email address">
+
+  <label for="account_password">Password:</label>
+  <input type="password" name="account_password" id="account_password" required placeholder="Enter your password"
+    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{12,}" 
+    title="Must contain at least one number, one uppercase and lowercase letter, one special character, and at least 12 or more characters">
+  <div><i>Passwords must be minimum of 12 character and include 1 capital letter, 1 number and 1 special character</i></div>
+  <button type="button" id="toggle-password">Show/Hide Password</button> <!-- Optional toggle button -->
+
+  <button type="submit" class="register-button">Register</button>
+</form>
+
+<div class="login-link">
+  <p>Already have an account? <a href="/account/login">Log in here</a></p>
+</div>
+<script src="../js/script.js"></script>
