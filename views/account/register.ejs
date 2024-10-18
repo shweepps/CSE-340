@@ -17,13 +17,13 @@
 <form action="/account/register" method="post" class="registration-form">
   <p>ALL FIELDS ARE REQUIRED.</p>
   <label for="account_firstname">First Name:</label>
-  <input type="text" name="account_firstname" id="account_firstname" required placeholder="Enter your first name">
+  <input type="text" name="account_firstname" id="account_firstname" required placeholder="Enter your first name" value="<%= locals.account_firstname %>">
 
   <label for="account_lastname">Last Name:</label>
-  <input type="text" name="account_lastname" id="account_lastname" required placeholder="Enter your last name">
+  <input type="text" name="account_lastname" id="account_lastname" required placeholder="Enter your last name" value="<%= locals.account_lastname %>">
 
   <label for="account_email">Email Address:</label>
-  <input type="email" name="account_email" id="account_email" required placeholder="Enter your email address">
+  <input type="email" name="account_email" id="account_email" required placeholder="Enter your email address" value="<%= locals.account_email %>">
 
   <label for="account_password">Password:</label>
   <input type="password" name="account_password" id="account_password" required placeholder="Enter your password"
