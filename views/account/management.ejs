@@ -1,0 +1,11 @@
+<% if (title) {%>
+    <h1><%= title %></h1>
+    <% } else {
+        res.redirect('/')
+    } %>
+    
+<!-- Display flash message if available -->
+<%- messages() %>
+
+<!-- Content for the account management page -->
+<p>You're logged in.</p>

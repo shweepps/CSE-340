@@ -33,5 +33,7 @@ router.get("/trigger-error", (req, res, next) => {
   next(error); // Pass the error to the global error handler
 });
 
+//Route on activity 5
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
 module.exports = router;
