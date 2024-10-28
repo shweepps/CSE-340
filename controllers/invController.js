@@ -121,11 +121,11 @@ invCont.addClassification = async function (req, res, next) {
  **************************************** */
 invCont.buildAddInventory = async function (req, res, next) {
   let nav = await utilities.getNav();
-  let classificationList = await utilities.buildClassificationList();
+  let classificationSelect = await utilities.buildClassificationList();
   res.render("inventory/add-inventory", {
     title: "Add New Vehicle",
     nav,
-    classificationList, // Dropdown options for classifications
+    classificationSelect, // Dropdown options for classifications
     vehicleData: null, // No pre-existing data
     errors: null,
   });
@@ -138,6 +138,8 @@ invCont.buildAddInventory = async function (req, res, next) {
  **************************************** */
 invCont.addInventory = async function (req, res, next) {
   let nav = await utilities.getNav();
+  let classificationSelect = await utilities.buildClassificationList();
+
   const { classification_id, inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color } = req.body;
 
   // Validation messages
@@ -161,7 +163,7 @@ invCont.addInventory = async function (req, res, next) {
     return res.status(400).render("inventory/add-inventory", {
       title: "Add New Vehicle",
       nav,
-      classificationList: await utilities.buildClassificationList(classification_id),
+      classificationSelect,
       vehicleData: req.body, // Keep entered data sticky
       errors: null,
     });
@@ -175,6 +177,7 @@ invCont.addInventory = async function (req, res, next) {
     res.status(201).render("inventory/management", {
       title: "Inventory Management",
       nav,
+      classificationSelect,
       errors: null,
     });
   } else {
@@ -182,12 +185,125 @@ invCont.addInventory = async function (req, res, next) {
     res.status(500).render("inventory/add-inventory", {
       title: "Add New Vehicle",
       nav,
-      classificationList: await utilities.buildClassificationList(classification_id),
+      classificationSelect,
       vehicleData: req.body, // Keep entered data sticky
       errors: null,
     });
   }
 };
+
+
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+invCont.updateInventory = async function (req, res, next) {
+  let nav = await utilities.getNav()
+  let classificationSelect = await utilities.buildClassificationList();
+
+  const {
+    classification_id,
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
+    inv_miles,
+    inv_color,
+    
+  } = req.body
+
+  // Validation messages
+  let errors = [];
+
+  // Server-side validation for each field
+  if (!classification_id) errors.push("Classification is required.");
+  if (!inv_make || inv_make.length < 2) errors.push("Make is required and must be at least 2 characters.");
+  if (!inv_model || inv_model.length < 2) errors.push("Model is required and must be at least 2 characters.");
+  if (!inv_year || !/^\d{4}$/.test(inv_year)) errors.push("Valid year is required (4 digits).");
+  if (!inv_description || inv_description.length < 10) errors.push("Description is required and must be at least 10 characters.");
+  if (!inv_image || !/^\/images\/.*/.test(inv_image)) errors.push("Valid image path is required (must start with '/images/').");
+  if (!inv_thumbnail || !/^\/images\/.*/.test(inv_thumbnail)) errors.push("Valid thumbnail path is required (must start with '/images/').");
+  if (!inv_price || inv_price <= 0) errors.push("Price is required and must be a positive number.");
+  if (!inv_miles || inv_miles < 0) errors.push("Miles are required and must be a non-negative number.");
+  if (!inv_color || inv_color.length < 3) errors.push("Color is required and must be at least 3 characters.");
+
+  // If errors exist, return the form with error messages
+  if (errors.length > 0) {
+    req.flash("notice", errors.join("<br>"));
+    return res.status(400).render("inventory/edit-inventoryView", {
+      title: "Add New Vehicle",
+      nav,
+      classificationSelect,
+      vehicleData: req.body, // Keep entered data sticky
+      errors: null,
+    });
+  }
+
+
+
+  const updateResult = await invModel.updateInventoryItem(
+    inv_id,  
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
+    inv_miles,
+    inv_color,
+    classification_id
+  )
+
+  if (updateResult) {
+    const itemName = updateResult.inv_make + " " + updateResult.inv_model
+    req.flash("notice", `The ${itemName} was successfully updated.`)
+    res.status(201).render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      classificationSelect,
+      errors: null,});//changed here
+    
+  } else {
+    const classificationSelect = await utilities.buildClassificationList(classification_id)
+    const itemName = `${inv_make} ${inv_model}`
+    req.flash("notice", "Sorry, the update failed.")
+    res.status(501).render("inventory/edit-inventoryView", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_year,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_miles,
+    inv_color,
+    classification_id
+    })
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* ***************************
@@ -204,7 +320,45 @@ invCont.getInventoryJSON = async (req, res, next) => {
 }
 
 
+/* ****************************************
+ *  Build edit inventory item view
+ * activity 5
+ **************************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id)
+  let nav = await utilities.getNav()
+  const itemData = await invModel.getVehicleById(inv_id)
+  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  res.render("inventory/edit-inventoryView", {
+    title: "Edit " + itemName,
+    nav,
+    classificationSelect: classificationSelect,
+    errors: null,
+    inv_id: itemData.inv_id,
+    inv_make: itemData.inv_make,
+    inv_model: itemData.inv_model,
+    inv_year: itemData.inv_year,
+    inv_description: itemData.inv_description,
+    inv_image: itemData.inv_image,
+    inv_thumbnail: itemData.inv_thumbnail,
+    inv_price: itemData.inv_price,
+    inv_miles: itemData.inv_miles,
+    inv_color: itemData.inv_color,
+    classification_id: itemData.classification_id
+  })
+}
 
+
+
+
+
+
+
+
+
+
+ 
 
 
 

@@ -7,7 +7,7 @@
 <form action="/inv/add-inventory" method="POST" id="add-inventory-form">
   <!-- Select classification (make sure the selected value stays sticky) -->
   <label for="classification_id">Classification:</label>
-  <%- classificationList %> <!-- The classification select dropdown is generated in the controller -->
+  <%- classificationSelect %> <!-- The classification select dropdown is generated in the controller -->
 
   <label for="inv_make">Make:</label>
   <input type="text" id="inv_make" name="inv_make" value="<%= vehicleData ? vehicleData.inv_make : '' %>" required>

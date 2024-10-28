@@ -4,7 +4,6 @@ const router = new express.Router()
 const invController = require("../controllers/invController")
 const utilities = require("../utilities");//assingment 4
 
-
 //Route to build inventory by classification view
 router.get("/type/:classificationId", invController.buildByClassificationId);
 
@@ -23,6 +22,7 @@ router.post("/add-classification", utilities.handleErrors(invController.addClass
 // Route to display the add inventory form
 router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory));
 
+
 // Route to handle form submission for adding a new inventory item
 router.post("/add-inventory", utilities.handleErrors(invController.addInventory));
 
@@ -36,4 +36,12 @@ router.get("/trigger-error", (req, res, next) => {
 //Route on activity 5
 router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
+// Route to display the edit inventory item view by inventory_id
+router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView));
+
+// Route to handle the incoming request for updating an inventory item with validation
+router.post(
+  "/edit-inventoryView", // Validate inventory data on update
+  utilities.handleErrors(invController.updateInventory)
+)
 module.exports = router;
