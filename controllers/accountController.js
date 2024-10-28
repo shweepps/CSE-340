@@ -142,7 +142,7 @@ async function buildAccountManagement(req, res) {
     title: "Account Management",
     nav,
     errors: null,
-    notice: req.flash("notice"),
+    notice: req.flash("notice",'yeah you are in'),
     loggedin: req.session.loggedin, // Pass logged-in status
     accountData: req.session.accountData, // Pass account data
   });
