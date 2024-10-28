@@ -197,7 +197,7 @@ invCont.addInventory = async function (req, res, next) {
  *  Update Inventory Data
  * ************************** */
 invCont.updateInventory = async function (req, res, next) {
-  let nav = await utilities.getNav()
+  let nav = await utilities.getNav();
   let classificationSelect = await utilities.buildClassificationList();
 
   const {
@@ -212,8 +212,7 @@ invCont.updateInventory = async function (req, res, next) {
     inv_year,
     inv_miles,
     inv_color,
-    
-  } = req.body
+  } = req.body;
 
   // Validation messages
   let errors = [];
@@ -226,82 +225,127 @@ invCont.updateInventory = async function (req, res, next) {
   if (!inv_description || inv_description.length < 10) errors.push("Description is required and must be at least 10 characters.");
   if (!inv_image || !/^\/images\/.*/.test(inv_image)) errors.push("Valid image path is required (must start with '/images/').");
   if (!inv_thumbnail || !/^\/images\/.*/.test(inv_thumbnail)) errors.push("Valid thumbnail path is required (must start with '/images/').");
-  if (!inv_price || inv_price <= 0) errors.push("Price is required and must be a positive number.");
-  if (!inv_miles || inv_miles < 0) errors.push("Miles are required and must be a non-negative number.");
+  if (!inv_price || parseFloat(inv_price) <= 0) errors.push("Price is required and must be a positive number.");
+  if (!inv_miles || parseInt(inv_miles) < 0) errors.push("Miles are required and must be a non-negative number.");
   if (!inv_color || inv_color.length < 3) errors.push("Color is required and must be at least 3 characters.");
 
   // If errors exist, return the form with error messages
   if (errors.length > 0) {
     req.flash("notice", errors.join("<br>"));
     return res.status(400).render("inventory/edit-inventoryView", {
-      title: "Add New Vehicle",
+      title: `Edit ${inv_make} ${inv_model}`,
       nav,
       classificationSelect,
       vehicleData: req.body, // Keep entered data sticky
-      errors: null,
+      errors,
     });
   }
 
-
-
+  // Perform the update operation
   const updateResult = await invModel.updateInventoryItem(
-    inv_id,  
+    inv_id,
     inv_make,
     inv_model,
     inv_description,
     inv_image,
     inv_thumbnail,
-    inv_price,
-    inv_year,
-    inv_miles,
+    parseFloat(inv_price),
+    parseInt(inv_year),
+    parseInt(inv_miles),
     inv_color,
     classification_id
-  )
+  );
 
   if (updateResult) {
-    const itemName = updateResult.inv_make + " " + updateResult.inv_model
-    req.flash("notice", `The ${itemName} was successfully updated.`)
+    const itemName = `${inv_make} ${inv_model}`;
+    req.flash("notice", `The ${itemName} was successfully updated.`);
     res.status(201).render("inventory/management", {
       title: "Inventory Management",
       nav,
       classificationSelect,
-      errors: null,});//changed here
-    
+      errors: null,
+    });
   } else {
-    const classificationSelect = await utilities.buildClassificationList(classification_id)
-    const itemName = `${inv_make} ${inv_model}`
-    req.flash("notice", "Sorry, the update failed.")
+    req.flash("notice", "Sorry, the update failed.");
     res.status(501).render("inventory/edit-inventoryView", {
+      title: `Edit ${inv_make} ${inv_model}`,
+      nav,
+      classificationSelect,
+      vehicleData: req.body, // Ensure data is retained if update fails
+      errors: ["Update failed due to a server error."]
+    });
+  }
+};
+
+
+/* ****************************************
+ *  Build edit inventory item view
+ * activity 5
+ **************************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id);
+  let nav = await utilities.getNav();
+  const itemData = await invModel.getVehicleById(inv_id);
+  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id);
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`;
+
+  res.render("inventory/edit-inventoryView", {
     title: "Edit " + itemName,
     nav,
-    classificationSelect: classificationSelect,
+    classificationSelect,
     errors: null,
-    inv_id,
-    inv_make,
-    inv_model,
-    inv_year,
-    inv_description,
-    inv_image,
-    inv_thumbnail,
-    inv_price,
-    inv_miles,
-    inv_color,
-    classification_id
-    })
-  }
+    vehicleData: itemData,
+   // Pass vehicle data here
+  });
+};
+
+/* ****************************************
+ *  Build delete inventory item view
+ * activity 5
+ **************************************** */
+invCont.deleteInventoryView = async function (req, res, next){
+  const inv_id = parseInt(req.params.inv_id)
+  let nav = await utilities.getNav()
+  const itemData = await invModel.getVehicleById(inv_id)
+  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+  res.render("inventory/delete-confirm", {
+    title: "Delete " + itemName,
+    nav,
+    errors: null,
+    vehicleData: itemData,
+  })
 }
 
 
+/********************************************
+ * Delete Inventory Item
+ * Activity 5
+ ******************************************** */
+invCont.deleteInventoryItem = async function(req, res, next){
+  let nav = await utilities.getNav()
+  const inv_id =parseInt(req.body.inv_id)
+  let classificationSelect = await utilities.buildClassificationList();
 
+  const deleteResult = await invModel.deleteInventoryItem(inv_id)
 
-
-
-
-
-
-
-
-
+  if (deleteResult){
+    req.flash("notice", 'The deletion was successful.')
+    res.status(201).render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      classificationSelect,
+      errors: null,
+    });
+  }else {
+    req.flash("notice", "Sorry, the delete failed.");
+    res.render("inventory/delete-confirm", {
+      title: "Delete " + itemName,
+      nav,
+      vehicleData: req.body, // Ensure data is retained if update fails
+      errors: ["Delete failed due to a server error."]
+    });
+  }
+}
 
 
 
@@ -319,46 +363,6 @@ invCont.getInventoryJSON = async (req, res, next) => {
   }
 }
 
-
-/* ****************************************
- *  Build edit inventory item view
- * activity 5
- **************************************** */
-invCont.editInventoryView = async function (req, res, next) {
-  const inv_id = parseInt(req.params.inv_id)
-  let nav = await utilities.getNav()
-  const itemData = await invModel.getVehicleById(inv_id)
-  const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
-  const itemName = `${itemData.inv_make} ${itemData.inv_model}`
-  res.render("inventory/edit-inventoryView", {
-    title: "Edit " + itemName,
-    nav,
-    classificationSelect: classificationSelect,
-    errors: null,
-    inv_id: itemData.inv_id,
-    inv_make: itemData.inv_make,
-    inv_model: itemData.inv_model,
-    inv_year: itemData.inv_year,
-    inv_description: itemData.inv_description,
-    inv_image: itemData.inv_image,
-    inv_thumbnail: itemData.inv_thumbnail,
-    inv_price: itemData.inv_price,
-    inv_miles: itemData.inv_miles,
-    inv_color: itemData.inv_color,
-    classification_id: itemData.classification_id
-  })
-}
-
-
-
-
-
-
-
-
-
-
- 
 
 
 

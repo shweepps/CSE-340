@@ -1,0 +1,24 @@
+<h1><%= title %></h1>
+
+<!-- Display flash message if there is one -->
+<%- messages() %>
+<p>Confirm Deletion - The deletion is permanent.</p>
+<form action="/inv/delete" method="post" id="edit-inventory-form">
+ 
+  <label for="inv_make">Make:</label>
+  <input type="text" id="inv_make" name="inv_make" value="<%= vehicleData.inv_make %>" required readonly>
+
+  <label for="inv_model">Model:</label>
+  <input type="text" id="inv_model" name="inv_model" value="<%= vehicleData.inv_model %>" required readonly>
+
+  <label for="inv_year">Year:</label>
+  <input type="number" id="inv_year" name="inv_year" value="<%= vehicleData.inv_year %>" required pattern="^\d{4}$" title="Please enter a 4-digit year" readonly>
+
+  <label for="inv_price">Price:</label>
+  <input type="number" id="inv_price" name="inv_price" value="<%= vehicleData.inv_price %>" required min="0" step="1" readonly>
+
+  <button type="submit" class="submit-button">Delete Vehicle</button>
+
+  <!-- Hidden field for vehicle ID -->
+  <input type="hidden" name="inv_id" value="<%= vehicleData.inv_id %>">
+</form>

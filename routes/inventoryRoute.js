@@ -44,4 +44,16 @@ router.post(
   "/edit-inventoryView", // Validate inventory data on update
   utilities.handleErrors(invController.updateInventory)
 )
+
+//Route to deliver delete confirmation view activity 5
+router.post(
+  "/delete", // Validate inventory data on update
+  utilities.handleErrors(invController.deleteInventoryItem)
+
+)
+
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteInventoryView));
+
+
+
 module.exports = router;

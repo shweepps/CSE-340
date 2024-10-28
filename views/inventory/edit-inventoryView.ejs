@@ -4,39 +4,41 @@
 <%- messages() %>
 
 <form action="/inv/edit-inventoryView" method="post" id="edit-inventory-form">
-  <!-- Select classification -->
-  <label for="classification_id">Classification:</label>
-  <%- classificationSelect %> <!-- Classification dropdown populated in the controller -->
+ <!-- Select classification -->
+ <label for="classification_id">Classification:</label>
+ <%-  classificationSelect %> <!-- Populate options with selected classification -->
+
+
 
   <label for="inv_make">Make:</label>
-  <input type="text" id="inv_make" name="inv_make" value="<%= inv_make %>" required>
+  <input type="text" id="inv_make" name="inv_make" value="<%= vehicleData.inv_make %>" required>
 
   <label for="inv_model">Model:</label>
-  <input type="text" id="inv_model" name="inv_model" value="<%= inv_model %>" required>
+  <input type="text" id="inv_model" name="inv_model" value="<%= vehicleData.inv_model %>" required>
 
   <label for="inv_year">Year:</label>
-  <input type="number" id="inv_year" name="inv_year" value="<%= inv_year %>" required pattern="^\d{4}$" title="Please enter a 4-digit year">
+  <input type="number" id="inv_year" name="inv_year" value="<%= vehicleData.inv_year %>" required pattern="^\d{4}$" title="Please enter a 4-digit year">
 
   <label for="inv_description">Description:</label>
-  <textarea id="inv_description" name="inv_description" required><%= inv_description %></textarea>
+  <textarea id="inv_description" name="inv_description" required><%= vehicleData.inv_description %></textarea>
 
   <label for="inv_image">Image Path:</label>
-  <input type="text" id="inv_image" name="inv_image" value="<%= inv_image %>" required>
+  <input type="text" id="inv_image" name="inv_image" value="<%= vehicleData.inv_image %>" required>
 
   <label for="inv_thumbnail">Thumbnail Path:</label>
-  <input type="text" id="inv_thumbnail" name="inv_thumbnail" value="<%= inv_thumbnail %>" required>
+  <input type="text" id="inv_thumbnail" name="inv_thumbnail" value="<%= vehicleData.inv_thumbnail %>" required>
 
   <label for="inv_price">Price:</label>
-  <input type="number" id="inv_price" name="inv_price" value="<%= inv_price %>" required min="0" step="1">
+  <input type="number" id="inv_price" name="inv_price" value="<%= vehicleData.inv_price %>" required min="0" step="1">
 
   <label for="inv_miles">Miles:</label>
-  <input type="number" id="inv_miles" name="inv_miles" value="<%= inv_miles %>" required min="0">
+  <input type="number" id="inv_miles" name="inv_miles" value="<%= vehicleData.inv_miles %>" required min="0">
 
   <label for="inv_color">Color:</label>
-  <input type="text" id="inv_color" name="inv_color" value="<%= inv_color %>" required>
+  <input type="text" id="inv_color" name="inv_color" value="<%= vehicleData.inv_color %>" required>
 
   <button type="submit" class="submit-button">Update Vehicle</button>
-  <input type="hidden" name="inv_id"
-  <% if(locals.inv_id) { %> value="<%= locals.inv_id %>"
-  <% } %>>
+
+  <!-- Hidden field for vehicle ID -->
+  <input type="hidden" name="inv_id" value="<%= vehicleData.inv_id %>">
 </form>
