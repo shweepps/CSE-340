@@ -34,6 +34,13 @@ app.use(session({
   name: 'sessionId',
 }))
 
+// Set the loggedin variable globally for views Assignment 5
+app.use((req, res, next) => {
+  res.locals.loggedin = req.session?.loggedin || false;
+  res.locals.account_firstname = req.session?.account_firstname || ''; // Default to an empty string if not logged in
+  next();
+});
+
 // Express Messages Middleware
 app.use(require('connect-flash')())
 app.use(function(req, res, next){
@@ -84,6 +91,8 @@ app.use((req, res, next) => {
   });
 });
 
+
+
 /* ************************************
  * Express Error Handler
  * Place after all other middleware
@@ -104,6 +113,12 @@ app.use(async (err, req, res, next) => {
     nav
   });
 });
+
+
+// app.use((req, res, next) => {
+//   res.locals.loggedin = req.session?.loggedin || false; // Adjust based on where you store login status
+//   next();
+// });
 
 /* **********************************
  * Local Server Information

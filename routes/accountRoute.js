@@ -12,10 +12,7 @@ router.get("/login", utilities.handleErrors(accountController.buildLogin));
 //Route to handle registration view when Signup is clicked (UNIT 4 ACTIVITY)
 router.get("/register", utilities.handleErrors(accountController.buildRegister));
 
-// Route to handle the account management view activity 5
 
-
-//Moshoeshoe@1993
 
 //Route to handle register data from registration page
 router.post('/register',
@@ -39,6 +36,7 @@ router.get(
   utilities.checkAuth, // Middleware to verify login
   utilities.handleErrors(accountController.buildAccountManagement)
 );
+
 
 
   

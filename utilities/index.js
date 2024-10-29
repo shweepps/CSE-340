@@ -91,6 +91,40 @@ Util.checkJWTToken = (req, res, next) => {
   }
 }
 
+/***************************************************
+ * Checks account type for administrative views only (Middleware)
+ * task 2 in Assingment 5 
+ **************************************************** */
+Util.checkAdminOrEmployee = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  // Check if JWT exists
+  if (!token) {
+    req.flash("notice", "Access denied. Please log in as an employee or admin.");
+    return res.redirect("/account/login");
+  }
+
+  try {
+    // Verify JWT
+    const accountData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // Check if account type is "Employee" or "Admin"
+    if (accountData.account_type === "Employee" || accountData.account_type === "Admin") {
+      req.session.accountData = accountData; // Store verified data in session
+      return next();
+    } else {
+      req.flash("notice", "Access denied. Only employees and admins can access this page.");
+      return res.redirect("/account/login");
+    }
+  } catch (error) {
+    req.flash("notice", "Session expired or invalid. Please log in.");
+    return res.redirect("/account/login");
+  }
+};
+
+
+
+
 /**************************
  * Build Vehicle view 
  * assignment 3
@@ -146,10 +180,16 @@ Util.checkAuth = (req, res, next) => {
     next();
   } catch (err) {
     res.clearCookie("jwt");
+    res.clearCookie("sessionId");
     req.flash("notice", "Your session has expired. Please log in again.");
     return res.redirect('/account/login');
   }
 };
+
+
+
+
+
 
 
 module.exports = Util

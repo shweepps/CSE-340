@@ -4,27 +4,33 @@ const router = new express.Router()
 const invController = require("../controllers/invController")
 const utilities = require("../utilities");//assingment 4
 
+// Middleware to restrict access to only employees and admins
+const restrictedAccess = utilities.checkAdminOrEmployee;
+
+
+
+
 //Route to build inventory by classification view
 router.get("/type/:classificationId", invController.buildByClassificationId);
 
 //Route to build inventory item detail view by vehicle ID assignment 3
 router.get("/detail/:inv_id", invController.buildVehicleDetail);
 
-//Router for management route Assignment 4 (redirect for '/inv/' to management)
-router.get("/", utilities.handleErrors(invController.buildManagement));
+//Router for management route Assignment 4 (redirect for '/inv/' to management) now with restriction from assignment 5
+router.get("/", restrictedAccess, utilities.handleErrors(invController.buildManagement));
 
 // Route to display the add classification form Assignment 4
-router.get("/add-classification", utilities.handleErrors(invController.buildAddClassification));
+router.get("/add-classification", restrictedAccess, utilities.handleErrors(invController.buildAddClassification));
 
 // Route to handle form submission to add new classification Assignment 4
-router.post("/add-classification", utilities.handleErrors(invController.addClassification));
+router.post("/add-classification", restrictedAccess, utilities.handleErrors(invController.addClassification));
 
 // Route to display the add inventory form
-router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory));
+router.get("/add-inventory",restrictedAccess, utilities.handleErrors(invController.buildAddInventory));
 
 
 // Route to handle form submission for adding a new inventory item
-router.post("/add-inventory", utilities.handleErrors(invController.addInventory));
+router.post("/add-inventory",restrictedAccess, utilities.handleErrors(invController.addInventory));
 
 
 router.get("/trigger-error", (req, res, next) => {
@@ -37,11 +43,11 @@ router.get("/trigger-error", (req, res, next) => {
 router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
 // Route to display the edit inventory item view by inventory_id
-router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView));
+router.get("/edit/:inv_id", restrictedAccess, utilities.handleErrors(invController.editInventoryView));
 
 // Route to handle the incoming request for updating an inventory item with validation
 router.post(
-  "/edit-inventoryView", // Validate inventory data on update
+  "/edit-inventoryView", restrictedAccess, // Validate inventory data on update
   utilities.handleErrors(invController.updateInventory)
 )
 
@@ -52,7 +58,8 @@ router.post(
 
 )
 
-router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteInventoryView));
+router.get("/delete/:inv_id", restrictedAccess, utilities.handleErrors(invController.deleteInventoryView));
+
 
 
 

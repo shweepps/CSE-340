@@ -112,7 +112,9 @@ async function accountLogin(req, res) {
       
       res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 });
       req.session.loggedin = true; // Set logged-in status in session
+      req.session.account_firstname = accountData.account_firstname; // Assignment 5 passing the logged in name to navigator
       req.session.accountData = accountData; // Store account data in session
+      
       return res.redirect("/account/"); // Redirect to account management
     } else {
       req.flash("notice", "Please check your credentials and try again.");
@@ -128,9 +130,6 @@ async function accountLogin(req, res) {
   }
 }
 
-
-
-
 /* ****************************************
 *  Process account management view
 * *************************************** */
@@ -142,12 +141,11 @@ async function buildAccountManagement(req, res) {
     title: "Account Management",
     nav,
     errors: null,
-    notice: req.flash("notice",'yeah you are in'),
+    notice: req.flash("notice"),
     loggedin: req.session.loggedin, // Pass logged-in status
     accountData: req.session.accountData, // Pass account data
   });
 }
-
 
 
 module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement }

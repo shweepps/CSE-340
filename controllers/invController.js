@@ -68,10 +68,12 @@ invCont.buildManagement = async function (req, res, next) {
  **************************************** */
 invCont.buildAddClassification = async function (req, res, next) {
   let nav = await utilities.getNav();
+  const classificationSelect = await utilities.buildClassificationList()
   res.render("inventory/add-classification", {
     title: "Add New Classification",
     nav,
     errors: null,
+    classificationSelect,
   });
 };
 
@@ -81,6 +83,7 @@ invCont.buildAddClassification = async function (req, res, next) {
  **************************************** */
 invCont.addClassification = async function (req, res, next) {
   let nav = await utilities.getNav();
+  const classificationSelect = await utilities.buildClassificationList()
   const { classification_name } = req.body;
 
   // Server-side validation: check that classification_name is alphanumeric
@@ -104,6 +107,7 @@ invCont.addClassification = async function (req, res, next) {
       title: "Inventory Management",
       nav: updatedNav,
       errors: null,
+      classificationSelect,
     });
   } else {
     req.flash("error", "Failed to add classification.");
