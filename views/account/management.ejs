@@ -9,16 +9,21 @@
 <% if (accountData.account_type === 'Employee' || accountData.account_type === 'Admin') { %>
     <h2>Welcome <%- account_firstname %></h2>
     <p>You're logged in.</p>
+    <ul class="inv-manage">
+        <li><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></li>
+    </ul>
     
-    <!-- Dynamically construct the update URL with the session's account_id -->
-    <p><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></p>
 
     <h2>Inventory management</h2>
-    <p><a href="/inv/">Manage Inventory</a></p>
+    <ul class="inv-manage">
+        <li><a href="/inv/">Manage Inventory</a></li>
+    </ul>
+   
 <% } else { %>
     <h2>Welcome <%- account_firstname %></h2>
     <p>You're logged in.</p>
     
-    <!-- Dynamically construct the update URL for non-admin users -->
-    <a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a>
+    <ul class="inv-manage">
+        <li><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></li>
+    </ul>
 <% } %>

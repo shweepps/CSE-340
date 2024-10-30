@@ -191,18 +191,14 @@ async function updateAccount(req, res) {
   const { account_firstname, account_lastname, account_email } = req.body;
   const account_id = req.session.account_id; // Retrieve account_id from session
 
-  // Check if account_id is valid
-  // if (!account_id || isNaN(account_id)) {
-  //   req.flash("notice", "Invalid account ID.");
-  //   return res.status(400).redirect("/account/update");
-  // }
+
   
   try {
     // Check if email already exists and isn't the user's current email
     const existingAccount = await accountModel.getAccountByEmail(account_email);
     if (existingAccount && existingAccount.account_id !== account_id) {
       req.flash("notice", "This email is already in use. Please use another email.");
-      return res.status(400).render("/account", {
+      return res.status(400).render("account/management", {
         title: "Update Account",
         nav,
         errors: null,
@@ -212,15 +208,23 @@ async function updateAccount(req, res) {
       });
     }
 
-    const updateResult = await accountModel.updateAccountInfo(account_id, account_firstname, account_lastname, account_email);
+    const updateResult = await accountModel.updateAccountInfo(
+      account_id, 
+      account_firstname, 
+      account_lastname, 
+      account_email);
 
         if (updateResult) {
           req.flash("notice", "Account information updated successfully.");
-          return res.redirect("/account/"); // Redirect to account management
+          res.status(201).render("account/management", {
+            title: "Account Management",
+            nav,
+            errors: null,
+          });
         } else {
           req.flash("notice", "Sorry, the update failed.");
-          return res.status(501).render("account", {
-            title: "Update Account",
+          return res.status(501).render("account/management", {
+            title: "Account Management",
             nav,
             accountData: req.body,
             errors: ["Update failed due to a server error."]
@@ -228,7 +232,7 @@ async function updateAccount(req, res) {
         }
       } catch (error) {
     req.flash("notice", "Error updating account information.");
-    res.status(500).render("account/update", {
+    res.status(500).render("account/management", {
       title: "Update Account",
       nav,
       errors: null,

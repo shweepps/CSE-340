@@ -79,9 +79,13 @@ async function updateAccountInfo(account_id, account_firstname, account_lastname
       RETURNING *;`;
     const result = await pool.query(sql, [account_firstname, account_lastname, account_email, account_id]);
     return result.rows[0];
+    
   } catch (error) {
+    console.error("Error details:", error);
     throw new Error("Error updating account information");
   }
+
+  
 }
 
 // Update account password by account_id
@@ -94,6 +98,7 @@ async function updateAccountPassword(account_id, account_password) {
     const result = await pool.query(sql, [account_password, account_id]);
     return result.rows[0];
   } catch (error) {
+    console.error("Error details:", error);
     throw new Error("Error updating password");
   }
 }
