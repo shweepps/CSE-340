@@ -29,6 +29,19 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      return res.redirect('/'); // Handle error, if needed
+    }
+    res.clearCookie('sessionId');
+    res.clearCookie('jwt');
+    res.redirect('/'); // Redirect to homepage or login page
+  });
+});
+
+
 
 // Account management route with authentication check Activity 5
 router.get(
@@ -37,6 +50,26 @@ router.get(
   utilities.handleErrors(accountController.buildAccountManagement)
 );
 
+/***********************************
+ * assignment 5 routes for updating
+ *********************************** */
+
+// Route to display the account update form
+router.get("/update/:account_id", utilities.handleErrors(accountController.buildAccountUpdateView));
+
+// Route to handle account information update
+router.post(
+  "/update/:account_id",
+   // Server-side validation middleware for account update
+  utilities.handleErrors(accountController.updateAccount)
+);
+
+// Route to handle password update
+router.post(
+  "/change-password",
+  utilities.validatePassword, // Server-side validation middleware for password
+  utilities.handleErrors(accountController.changePassword)
+);
 
 
   

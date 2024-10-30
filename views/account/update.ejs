@@ -1,0 +1,74 @@
+<% if (title) { %>
+  <h1><%= title %></h1>
+<% } else { %>
+  <%- res.redirect('/') %>
+<% } %>
+
+
+
+
+<%- messages() %> <!-- Display any messages or errors from the server -->
+
+
+<!-- Account Update Form -->
+<h2>Account Update</h2>
+<form action="/account/update/<%= accountData.account_id %>" method="post">
+  <label for="first_name">First Name:</label>
+  <input
+    type="text"
+    id="first_name"
+    name="account_firstname"
+    required
+    value="<%= accountData.account_firstname  %>"
+  />
+
+  <label for="last_name">Last Name:</label>
+  <input
+    type="text"
+    id="last_name"
+    name="account_lastname"
+    required
+    value="<%=  accountData.account_lastname  %>"
+  />
+
+  <label for="email">Email Address:</label>
+  <input
+    type="email"
+    id="email"
+    name="acount_email"
+    required
+    value="<%= accountData.account_email  %>"
+  />
+
+  <!-- Hidden Field for Account ID -->
+  <input type="hidden" name="account_id" value="<%= accountData.account_id  %>" />
+
+  <button type="submit">Update Account</button>
+</form>
+
+<!-- Change Password Form -->
+<h2>Change Password</h2>
+<p>To change your password, enter a new password that meets the following requirements:</p>
+<ul>
+  <li>Minimum of 12 characters</li>
+  <li>At least 1 capital letter</li>
+  <li>At least 1 number</li>
+  <li>At least 1 special character</li>
+</ul>
+
+<form action="/account/change-password" method="post">
+  <label for="password">New Password:</label>
+  <input
+    type="password"
+    id="password"
+    name="account_password"
+    required
+    pattern="(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}"
+    title="Must be at least 12 characters long, include 1 uppercase letter, 1 number, and 1 special character."
+  />
+
+  <!-- Hidden Field for Account ID -->
+  <input type="hidden" name="account_id" value="<%= accountData.account_id %>" />
+
+  <button type="submit">Change Password</button>
+</form>

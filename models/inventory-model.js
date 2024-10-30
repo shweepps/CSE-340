@@ -92,8 +92,7 @@ async function updateInventoryItem(inv_id, inv_make, inv_model, inv_description,
         inv_color = $9,
         classification_id = $10
       WHERE inv_id = $11
-      RETURNING *;
-    `;
+      RETURNING *;`;
     const values = [inv_make, inv_model, inv_description, inv_image, inv_thumbnail, inv_price, inv_year, inv_miles, inv_color, classification_id, inv_id];
     const result = await pool.query(sql, values);
     return result.rows[0];

@@ -42,4 +42,71 @@ async function getAccountByEmail (account_email) {
 }
 
 
-module.exports = {registerAccount, checkExistingEmail, getAccountByEmail};
+/**************************************
+ * assignment 5 model for update account
+ ************************************** */
+
+
+
+ 
+/* ****************************************
+ *  Get account details by account ID
+ **************************************** */
+async function getAccountById(account_id) {
+  try {
+    const data = await pool.query(
+      `SELECT * FROM public.account WHERE account_id = $1`,
+      [account_id]
+    )
+    return data.rows[0] // Return single account object
+  } catch (error) {
+    console.error("Error retrieving account by ID:", error)
+    throw error // Throw error to handle it in your middleware
+  }
+}
+
+
+// Update account information (first name, last name, and email) by account_id
+async function updateAccountInfo(account_id, account_firstname, account_lastname, account_email) {
+  try {
+    const sql = `
+      UPDATE account
+      SET 
+        account_firstname = $1,
+        account_lastname = $2,
+        account_email = $3
+      WHERE account_id = $4
+      RETURNING *;`;
+    const result = await pool.query(sql, [account_firstname, account_lastname, account_email, account_id]);
+    return result.rows[0];
+  } catch (error) {
+    throw new Error("Error updating account information");
+  }
+}
+
+// Update account password by account_id
+async function updateAccountPassword(account_id, account_password) {
+  try {
+    const sql = `
+      UPDATE account
+      SET account_password = $1
+      WHERE account_id = $2`;
+    const result = await pool.query(sql, [account_password, account_id]);
+    return result.rows[0];
+  } catch (error) {
+    throw new Error("Error updating password");
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = {registerAccount, checkExistingEmail, getAccountByEmail, getAccountById, updateAccountInfo, updateAccountPassword};

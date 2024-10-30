@@ -122,6 +122,42 @@ Util.checkAdminOrEmployee = (req, res, next) => {
   }
 };
 
+/****************************************
+ * assingment 5 account validation
+ ****************************************/
+
+// Validation for account update
+Util.validateAccountUpdate = (req, res, next) => {
+  const { account_firstname, account_lastname, account_email } = req.body;
+  // Check for required fields and valid email format
+  if (!account_firstname || !account_lastname || !account_lastname) {
+    req.flash("error", "All fields are required.");
+    return res.redirect("/account/");
+  }
+  next();
+};
+
+// Validation for password update
+Util.validatePassword = (req, res, next) => {
+  const { password } = req.body;
+  const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/;
+  if (!password || !passwordPattern.test(password)) {
+    req.flash("error", "Password must meet the requirements.");
+    return res.redirect("/account/");
+  }
+  next();
+};
+
+
+
+
+
+
+
+
+
+
+
 
 
 

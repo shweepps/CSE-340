@@ -1,27 +1,24 @@
-<% if (title) {%>
+<% if (title) { %>
     <h1><%= title %></h1>
-    <% } else {
-        res.redirect('/')
-    } %>
-    
-<!-- Display flash message if available -->
+<% } else { %>
+    <%- res.redirect('/') %>
+<% } %>
+
 <%- messages() %>
 
 <% if (accountData.account_type === 'Employee' || accountData.account_type === 'Admin') { %>
-   
     <h2>Welcome <%- account_firstname %></h2>
-    <!-- Content for the account management page -->
     <p>You're logged in.</p>
-    <p><a href="#">Edit Account information</a></p>
+    
+    <!-- Dynamically construct the update URL with the session's account_id -->
+    <p><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></p>
+
     <h2>Inventory management</h2>
-    <p><a href="/inv/">Management Inventory.</a></p>
-
+    <p><a href="/inv/">Manage Inventory</a></p>
 <% } else { %>
-
     <h2>Welcome <%- account_firstname %></h2>
-<!-- Content for the account management page -->
     <p>You're logged in.</p>
-    <a href="#">Edit Account information</a>
-
+    
+    <!-- Dynamically construct the update URL for non-admin users -->
+    <a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a>
 <% } %>
-
