@@ -41,6 +41,32 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.locals.loggedin = req.session.loggedin || false;
+  if (req.session && req.session.accountData) {
+    res.locals.accountData = req.session.accountData;
+  } else {
+    res.locals.accountData = null;
+  }
+  next();
+});
+
+
+// Middleware to add account data to views
+app.use((req, res, next) => {
+  if (req.session && req.session.accountData) {
+    res.locals.accountData = req.session.accountData; // Pass accountData to views
+  } else {
+    res.locals.accountData = null; // Ensure it’s defined as null if not logged in
+  }
+  next();
+});
+
+
+
+
+
+
 // Express Messages Middleware
 app.use(require('connect-flash')())
 app.use(function(req, res, next){

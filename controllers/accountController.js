@@ -327,4 +327,5 @@ async function viewMessages(req, res) {
 }
 
 
+
 module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, updateAccount,  buildContactForm, processContactForm, viewMessages,  buildProfileUpdate, processUpdateAccountInfo, processUpdatePassword  }

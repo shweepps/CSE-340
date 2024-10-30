@@ -1,10 +1,4 @@
-<% if (title) {%>
-    <h1><%= title %></h1>
-    <% } else {
-        res.redirect('/')
-    } %>
-    
-  <%- messages() %> <!-- This is a custom middleware function that displays flash messages -->
+
 
   <form class="contact-form" action="/account/contact" method="POST">
     <label for="sender_name">Name:</label>
