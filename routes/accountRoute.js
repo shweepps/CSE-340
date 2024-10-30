@@ -85,6 +85,21 @@ router.post("/contact", accountController.processContactForm);
 router.get("/admin/messages",restrictedAccess, accountController.viewMessages);
 
 
+/************************
+ * 
+ * update user infrmation
+ */
+
+// Route to display the profile update form
+router.get("/updateProfile", accountController.buildProfileUpdate);
+
+// Route to process updating general account information
+router.post("/updateProfile/info", accountController.processUpdateAccountInfo);
+
+// Route to process updating the account password
+router.post("/updateProfile/password", accountController.processUpdatePassword);
+
+
 
 // Export the router for use in server.js
 module.exports = router;

@@ -1,4 +1,4 @@
-const pool = require('../database/');
+const pool = require('../database/')
 
 /* *****************************
 *   Register new account
@@ -133,6 +133,46 @@ async function getMessages() {
 }
 
 
+/*********************************
+ * 
+ * Update account information
+ */
+
+
+// Update general account information (first name, last name, and email)
+async function updateAccountInfo(account_id, account_firstName, account_lastName, account_email) {
+  try {
+    const sql = `
+      UPDATE account
+      SET account_firstname = $1, account_lastname = $2, account_email = $3
+      WHERE account_id = $4
+      RETURNING *
+    `;
+    const values = [account_firstName, account_lastName, account_email, account_id];
+    const result = await pool.query(sql, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating account info:", error);
+    throw error;
+  }
+}
+
+// Update account password
+async function updateAccountPassword(account_id, hashedPassword) {
+  try {
+    const sql = `
+      UPDATE account
+      SET account_password = $1
+      WHERE account_id = $2
+      RETURNING *
+    `;
+    const result = await pool.query(sql, [hashedPassword, account_id]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error updating account password:", error);
+    throw error;
+  }
+}
 
 
 
@@ -140,4 +180,8 @@ async function getMessages() {
 
 
 
-module.exports = {registerAccount, checkExistingEmail, getAccountByEmail, getAccountById, updateAccountInfo, updateAccountPassword, saveMessage, getMessages};
+
+
+
+
+module.exports = {registerAccount, checkExistingEmail, getAccountByEmail, getAccountById, updateAccountInfo, updateAccountPassword, saveMessage, getMessages, updateAccountInfo, updateAccountPassword};

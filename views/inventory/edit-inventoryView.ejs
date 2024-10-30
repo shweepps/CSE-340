@@ -11,13 +11,16 @@
 
 
   <label for="inv_make">Make:</label>
-  <input type="text" id="inv_make" name="inv_make" value="<%= vehicleData.inv_make %>" required>
+  <input type="text" id="inv_make" name="inv_make"
+   value="<%= vehicleData.inv_make %>" required>
 
   <label for="inv_model">Model:</label>
-  <input type="text" id="inv_model" name="inv_model" value="<%= vehicleData.inv_model %>" required>
+  <input type="text" id="inv_model" name="inv_model"
+   value="<%= vehicleData.inv_model %>" required>
 
   <label for="inv_year">Year:</label>
-  <input type="number" id="inv_year" name="inv_year" value="<%= vehicleData.inv_year %>" required pattern="^\d{4}$" title="Please enter a 4-digit year">
+  <input type="number" id="inv_year" name="inv_year"
+   value="<%= vehicleData.inv_year %>" required pattern="^\d{4}$" title="Please enter a 4-digit year">
 
   <label for="inv_description">Description:</label>
   <textarea id="inv_description" name="inv_description" required><%= vehicleData.inv_description %></textarea>

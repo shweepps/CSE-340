@@ -200,7 +200,7 @@ invCont.addInventory = async function (req, res, next) {
 /* ***************************
  *  Update Inventory Data
  * ************************** */
-invCont.updateInventory = async function (req, res, next) {
+invCont.updateInventory = async function (req, res) {
   let nav = await utilities.getNav();
   let classificationSelect = await utilities.buildClassificationList();
 

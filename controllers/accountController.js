@@ -114,7 +114,8 @@ async function accountLogin(req, res) {
       req.session.loggedin = true; // Set logged-in status in session
       req.session.account_firstname = accountData.account_firstname; // Assignment 5 passing the logged in name to navigator
       req.session.accountData = accountData; // Store account data in session
-      
+      req.session.user = accountData; // Update this line
+
       return res.redirect("/account/"); // Redirect to account management
     } else {
       req.flash("notice", "Please check your credentials and try again.");
@@ -158,27 +159,53 @@ async function buildAccountManagement(req, res) {
 *  Display the account update view
 *  Assignment 5
 * *************************************** */
-async function buildAccountUpdateView(req, res) {
-  const account_id = parseFloat(req.params.account_id);
-  let nav = await utilities.getNav();
-  const accountData = await accountModel.getAccountById(account_id);
-  const userName = `${accountData.account_firstname}`
+// Display the profile update form
+async function buildProfileUpdate(req, res) {
+  const nav = await utilities.getNav();
 
+    // Check if user is logged in
+    if (!req.session.user) {
+      req.flash("notice", "You need to log in to update your profile.");
+      return res.redirect("/account/login");
+    }
+
+  const { account_id, account_firstname, account_lastname, account_email } = req.session.user;
+  res.render("account/updateProfile", {
+    title: "Update Profile",
+    nav,
+    account: { account_id, account_firstname, account_lastname, account_email },
+    loggedin: req.session.loggedin, // Pass logged-in status
+    accountData: req.session.accountData, // Pass account data
+    errors: null
+  });
+}
+
+// Handle updating general account information
+async function processUpdateAccountInfo(req, res) {
+  const { account_id } = req.session.accountData;
+  const { account_firstname, account_lastname, account_email } = req.body;
   try {
-     res.render("account/update", {
-      title: "Update Account of " + userName,
-      nav,
-      accountData :accountData,
-      errors: null,
-    });
+   const resultUpdate = await accountModel.updateAccountInfo(account_id, account_firstname, account_lastname, account_email);
+   if(resultUpdate){
+    
+    // Update session data
+    req.session.accountData.account_firstname = account_firstname;
+    req.session.accountData.account_lastname = account_lastname;
+    req.session.accountData.account_email = account_email;
+
+
+    
+    res.redirect("/account/"); // Redirect to the profile page or another route
+    req.flash("notice", "Account information updated successfully.");
+    
+   }else{
+    req.flash("notice",'failed')
+    res.redirect("account")
+   }
+    
   } catch (error) {
-    req.flash("notice", "Error loading account update view.");
-    res.status(500).render("account", {
-      title: "Update Account",
-      nav,
-      errors: null,
-      accountData : accountData,
-    });
+    console.error("Error updating account information:", error);
+    res.status(500).send("Error updating account information.");
   }
 }
 
@@ -191,9 +218,6 @@ async function updateAccount(req, res) {
   const { account_firstname, account_lastname, account_email } = req.body;
   const account_id = req.session.account_id; // Retrieve account_id from session
 
-
-  
-  try {
     // Check if email already exists and isn't the user's current email
     const existingAccount = await accountModel.getAccountByEmail(account_email);
     if (existingAccount && existingAccount.account_id !== account_id) {
@@ -216,6 +240,14 @@ async function updateAccount(req, res) {
 
         if (updateResult) {
           req.flash("notice", "Account information updated successfully.");
+          
+          // Update session data with new account info
+          req.session.accountData.account_firstname = account_firstname;
+          req.session.accountData.account_lastname = account_lastname;
+          req.session.accountData.account_email = account_email;
+                
+          
+          
           res.status(201).render("account/management", {
             title: "Account Management",
             nav,
@@ -230,147 +262,31 @@ async function updateAccount(req, res) {
             errors: ["Update failed due to a server error."]
           });
         }
-      } catch (error) {
-    req.flash("notice", "Error updating account information.");
-    res.status(500).render("account/management", {
-      title: "Update Account",
-      nav,
-      errors: null,
-      account_firstname,
-      account_lastname,
-      account_email,
-    });
-  }
-}
-
-
-// /* ****************************************
-//  *  Process Account Information Update
-//  * **************************************** */
-// async function updateAccount(req, res) {
-//   let nav = await utilities.getNav();
-//   const { account_firstname, account_lastname, account_email } = req.body;
-//   const account_id = req.session.account_id; // Retrieve account_id from session
-
-//   // Validation messages
-//   let errors = [];
-
-//   // Server-side validation for each field
-//   if (!account_firstname || account_firstname.length < 2) {
-//     errors.push("First name is required and must be at least 2 characters.");
-//   }
-//   if (!account_lastname || account_lastname.length < 2) {
-//     errors.push("Last name is required and must be at least 2 characters.");
-//   }
-//   if (!account_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(account_email)) {
-//     errors.push("A valid email address is required.");
-//   }
-
-//   // If there are validation errors, return the form with error messages
-//   if (errors.length > 0) {
-//     req.flash("notice", errors.join("<br>"));
-//     return res.status(400).render(`account/update/${account_id}`, {
-//       title: "Update Account",
-//       nav,
-//       accountData: req.body, // Keep entered data sticky
-//       errors,
-//     });
-//   }
-
-//   try {
-//     // Check if the email already exists in another account
-//     const existingAccount = await accountModel.getAccountByEmail(account_email);
-//     if (existingAccount && existingAccount.account_id !== account_id) {
-//       req.flash("notice", "This email is already in use. Please use another email.");
-//       return res.status(400).render("account/update", {
-//         title: "Update Account",
-//         nav,
-//         accountData: req.body,
-//         errors: ["This email is already in use."],
-//       });
-//     }
-
-//     // Perform the update operation
-//     const updateResult = await accountModel.updateAccountInfo(account_id, account_firstname, account_lastname, account_email);
-
-//     if (updateResult) {
-//       req.flash("notice", "Account information updated successfully.");
-//       return res.redirect("account");
-//     } else {
-//       req.flash("notice", "Sorry, the update failed.");
-//       return res.status(501).render("account", {
-//         title: "Update Account",
-//         nav,
-//         accountData: req.body,
-//         errors: ["Update failed due to a server error."]
-//       });
-//     }
-//   } catch (error) {
-//     console.error("Error updating account information:", error);
-//     req.flash("notice", "Error updating account information.");
-//     return res.status(500).render("account/", {
-//       title: "Update Account",
-//       nav,
-//       accountData: req.body,
-//       errors: ["An unexpected error occurred. Please try again later."],
-//     });
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      } 
 
 
 /* ****************************************
 *  Process password update
 *  Assignment 5
 * *************************************** */
-async function changePassword(req, res) {
-  let nav = await utilities.getNav();
-  const { password } = req.body;
-  const account_id = req.session.account_id; // Retrieve account_id from session
-
-  // Check if account_id is valid
-  if (!account_id || isNaN(account_id)) {
-    req.flash("notice", "Invalid account ID.");
-    return res.status(400).redirect("/account/update");
-  }
-
+// Handle updating the account password
+async function processUpdatePassword(req, res) {
+  const { account_id } = req.session.user;
+  const { account_password } = req.body;
   try {
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(account_password, 10);
     await accountModel.updateAccountPassword(account_id, hashedPassword);
-
-    req.flash("notice", "Password updated successfully.");
-    res.redirect("/account/management");
+    res.redirect("/account/updateProfile");
   } catch (error) {
-    req.flash("notice", "Error updating password.");
-    res.status(500).render("account/update", {
-      title: "Update Account",
-      nav,
-      errors: null,
-    });
+    console.error("Error updating password:", error);
+    res.status(500).send("Error updating password.");
   }
 }
 
 
-
+/*****************************************************************
+ * functions for contact form and admin messages Final enhancement
+ *****************************************************************/
 // Controller for displaying the contact form
 async function buildContactForm(req, res) {
   const nav = await utilities.getNav();
@@ -411,4 +327,4 @@ async function viewMessages(req, res) {
 }
 
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildAccountUpdateView, updateAccount, changePassword, buildContactForm, processContactForm, viewMessages  }
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, updateAccount,  buildContactForm, processContactForm, viewMessages,  buildProfileUpdate, processUpdateAccountInfo, processUpdatePassword  }

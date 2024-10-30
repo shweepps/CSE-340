@@ -5,7 +5,7 @@
     <div id="tools">
         <% if (loggedin==true) { %>
             <!-- Display when logged in -->
-             <a href="/account/">Welcome  <%- account_firstname %></a>
+             <a href="/account/">Welcome  <%- accountData.account_firstname %></a>
             <a title="Click to log out" href="/account/logout">Logout</a>
         <% } else { %>
             <!-- Display when logged out -->

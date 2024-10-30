@@ -7,10 +7,10 @@
 <%- messages() %>
 
 <% if (accountData.account_type === 'Employee' || accountData.account_type === 'Admin') { %>
-    <h2>Welcome <%- account_firstname %></h2>
+    <h2>Welcome <%- accountData.account_firstname %></h2>
     <p>You're logged in.</p>
     <ul class="inv-manage">
-        <li><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></li>
+        <li><a id="info-update" href="/account/updateProfile">Edit Account Information</a></li>
     </ul>
     
 
@@ -23,11 +23,11 @@
     </ul>
    
 <% } else { %>
-    <h2>Welcome <%- account_firstname %></h2>
+    <h2>Welcome <%- accountData.account_firstname  %></h2>
     <p>You're logged in.</p>
     
     <ul class="inv-manage">
-        <li><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></li>
+        <li><a id="info-update" href="/account/updateProfile">Edit Account Information</a></li>
     </ul>
 
     <ul class="inv-manage">
