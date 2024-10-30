@@ -18,6 +18,9 @@
     <ul class="inv-manage">
         <li><a href="/inv/">Manage Inventory</a></li>
     </ul>
+    <ul class="inv-manage">
+        <li><a id="info-update" href="./admin/messages"> Messages</a></li>
+    </ul>
    
 <% } else { %>
     <h2>Welcome <%- account_firstname %></h2>
@@ -26,4 +29,9 @@
     <ul class="inv-manage">
         <li><a id="info-update" href="/account/update/<%= accountData.account_id %>">Edit Account Information</a></li>
     </ul>
+
+    <ul class="inv-manage">
+        <li><a id="info-update" href="/account/contact">Leave us a Message</a></li>
+    </ul>
+
 <% } %>

@@ -246,6 +246,12 @@ UPDATE inventory
 SET inv_image = REPLACE(inv_image, '/images/', '/images/vehicles/'),
     inv_thumbnail = REPLACE(inv_thumbnail, '/images/', '/images/vehicles/');
 
-
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  sender_name VARCHAR(255) NOT NULL,
+  sender_email VARCHAR(255) NOT NULL,
+  message_content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 

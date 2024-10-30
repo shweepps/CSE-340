@@ -1,0 +1,25 @@
+<h1><%= title %></h1>
+  <% if (messages && messages.length > 0) { %>
+    <table class="admin-messages-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Message</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% messages.forEach(message => { %>
+          <tr>
+            <td><%= message.sender_name %></td>
+            <td><%= message.sender_email %></td>
+            <td><%= message.message_content %></td>
+            <td><%= new Date(message.created_at).toLocaleString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No messages to display.</p>
+  <% } %>

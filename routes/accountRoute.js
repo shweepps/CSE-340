@@ -5,6 +5,9 @@ const accountController = require("../controllers/accountController");
 const utilities = require("../utilities"); // Error handler
 const regValidate = require('../utilities/account-validation')
 
+const restrictedAccess = utilities.checkAdminOrEmployee;
+
+
 
 // Route to handle login view when "My Account" is clicked
 router.get("/login", utilities.handleErrors(accountController.buildLogin));
@@ -72,6 +75,16 @@ router.post(
 );
 
 
-  
+// Route to display the contact form
+router.get("/contact", accountController.buildContactForm);
+
+// Route to handle contact form submission
+router.post("/contact", accountController.processContactForm);
+
+// Route to display all messages in admin view
+router.get("/admin/messages",restrictedAccess, accountController.viewMessages);
+
+
+
 // Export the router for use in server.js
 module.exports = router;

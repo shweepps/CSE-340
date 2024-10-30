@@ -104,6 +104,33 @@ async function updateAccountPassword(account_id, account_password) {
 }
 
 
+// Function to save a new message
+async function saveMessage(sender_name, sender_email, message_content) {
+  try {
+    const sql = `
+      INSERT INTO messages (sender_name, sender_email, message_content)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const result = await pool.query(sql, [sender_name, sender_email, message_content]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error saving message:", error);
+    throw error;
+  }
+}
+
+// Function to retrieve all messages for the admin view
+async function getMessages() {
+  try {
+    const sql = "SELECT * FROM messages ORDER BY created_at DESC";
+    const result = await pool.query(sql);
+    return result.rows;
+  } catch (error) {
+    console.error("Error retrieving messages:", error);
+    throw error;
+  }
+}
 
 
 
@@ -113,5 +140,4 @@ async function updateAccountPassword(account_id, account_password) {
 
 
 
-
-module.exports = {registerAccount, checkExistingEmail, getAccountByEmail, getAccountById, updateAccountInfo, updateAccountPassword};
+module.exports = {registerAccount, checkExistingEmail, getAccountByEmail, getAccountById, updateAccountInfo, updateAccountPassword, saveMessage, getMessages};

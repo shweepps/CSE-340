@@ -371,12 +371,44 @@ async function changePassword(req, res) {
 
 
 
+// Controller for displaying the contact form
+async function buildContactForm(req, res) {
+  const nav = await utilities.getNav();
+  res.render("account/contact", {
+    title: "Contact Us",
+    nav,
+    errors: null
+  });
+}
+
+// Controller for processing the contact form submission
+async function processContactForm(req, res) {
+  const { sender_name, sender_email, message_content } = req.body;
+  try {
+    await accountModel.saveMessage(sender_name, sender_email, message_content);
+    req.flash("notice", 'Thank you, Expect to hear from us')
+    res.redirect("/account/contact");
+  } catch (error) {
+    console.error("Error processing contact form:", error);
+    res.status(500).send("Error submitting form.");
+  }
+}
+
+// Controller to display messages in the admin view
+async function viewMessages(req, res) {
+  const nav = await utilities.getNav();
+  try {
+    const messages = await accountModel.getMessages();
+    res.render("account/adminMessages", {
+      title: "Admin Messages",
+      nav,
+      messages
+    });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    res.status(500).send("Error loading messages.");
+  }
+}
 
 
-
-
-
-
-
-
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildAccountUpdateView, updateAccount, changePassword  }
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildAccountUpdateView, updateAccount, changePassword, buildContactForm, processContactForm, viewMessages  }
